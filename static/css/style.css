@@ -318,3 +318,27 @@ footer {
         font-size: 1.25rem;
     }
 }
+
+
+/* ===== Статусы заявок (День 4) ===== */
+.status-banner {
+    padding: .75rem 1rem;
+    margin: .75rem 0;
+    border-radius: 6px;
+    background: #f0ad4e;
+    color: #202124;
+}
+.status-pending { background: #f0ad4e; color: #202124; }
+.status-confirmed { background: #5cb85c; color: #ffffff; }
+.status-cancelled { background: #d9534f; color: #ffffff; }
+.status-banner:empty { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
