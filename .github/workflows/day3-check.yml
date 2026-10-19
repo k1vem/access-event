@@ -1,32 +1,28 @@
-﻿name: Day3 Backend Check
-on: push
-
+name: Day 3 Backend Check
+on: [push, pull_request]
 jobs:
-  check:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Check project structure
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - name: Verify backend files
         run: |
-          test -f app.py
-          test -f config.py
-          test -f models.py
-          test -f routes/auth.py
-          test -f routes/events.py
-          test -f routes/registrations.py
-          test -f utils/auth_helpers.py
-      - name: Check security helpers
-        run: |
-          grep -q "hash_password" utils/auth_helpers.py && echo "PASS: hash_password" || (echo "FAIL: hash_password" && exit 1)
-          grep -q "generate_token" utils/auth_helpers.py && echo "PASS: jwt" || (echo "FAIL: jwt" && exit 1)
-          grep -q "role_required" utils/auth_helpers.py && echo "PASS: roles" || (echo "FAIL: roles" && exit 1)
-      - name: Check accessibility
-        run: grep -q "accessibility" utils/accessibility.py && echo "PASS: accessibility" || (echo "FAIL: accessibility" && exit 1)
-      - name: Syntax check
+          for f in app.py config.py models.py routes/auth.py routes/events.py routes/registrations.py utils/auth_helpers.py utils/accessibility.py; do test -f "$f" || exit 1; done
+      - name: Compile Python
         run: python -m py_compile app.py config.py models.py routes/*.py utils/*.py
-      - run: echo "PASS: Day3 Backend Check completed"
+      - name: Check security and accessibility helpers
+        run: |
+          grep -q "hash_password" utils/auth_helpers.py
+          grep -q "generate_token" utils/auth_helpers.py
+          grep -q "role_required" utils/auth_helpers.py
+          grep -q "accessibility" utils/accessibility.py
+      - name: Run backend tests
+        env:
+          TESTING: "1"
+          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+        run: pytest -q
