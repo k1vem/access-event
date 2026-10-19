@@ -1,1 +1,28 @@
-{% extends "base.html" %}{% block title %}AccessEvent — доступные события{% endblock %}{% block content %}<section class="hero"><p class="eyebrow">Инклюзивная платформа</p><h1>События, доступные каждому</h1><p>Находите мероприятия с субтитрами, сурдопереводом, текстовым чатом и визуальными уведомлениями.</p><a class="button" href="/events">Найти мероприятие</a></section><section class="feature-grid" aria-label="Возможности платформы"><article class="feature"><h2>Понятный каталог</h2><p>Ищите события по названию и доступности.</p></article><article class="feature"><h2>Доступность заранее</h2><p>Узнавайте условия участия до регистрации.</p></article><article class="feature"><h2>Удобный интерфейс</h2><p>Клавиатурная навигация и экранные дикторы.</p></article></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}AccessEvent — главная{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Платформа инклюзивных мероприятий</h1>
+    <p>Находите события с сурдопереводом, визуальными оповещениями и доступной средой.</p>
+    <a href="{{ url_for('events_page') }}" class="btn btn-primary" aria-label="Перейти к списку мероприятий">
+        Смотреть мероприятия
+    </a>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h2>🔔 Уведомления</h2>
+        <p>Все уведомления визуальные — никаких звуковых сигналов.</p>
+    </div>
+    <div class="feature-card">
+        <h2>🤟 Сурдоперевод</h2>
+        <p>Мероприятия с жестовым переводом помечены специальным бейджем.</p>
+    </div>
+    <div class="feature-card">
+        <h2>♿ Доступность</h2>
+        <p>Каждое событие указывает, какие условия доступности предоставлены.</p>
+    </div>
+</section>
+{% endblock %}
