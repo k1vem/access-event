@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Мероприятие — AccessEvent{% endblock %}
+{% block content %}
+<section class="form-card">
+  <a href="/events">← Все мероприятия</a>
+  <div id="event-detail" data-event-id="{{ event_id }}"><p>Загрузка мероприятия…</p></div>
+  <div id="status-banner" class="status-banner" role="status" aria-live="polite"></div>
+  <p id="reg-result" role="status" aria-live="polite"></p>
+  <button id="register-btn" class="button" type="button">Записаться на мероприятие</button>
+  <h2>Текстовый чат</h2>
+  <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+  <form id="chat-form"><label for="chat-message">Сообщение</label><textarea id="chat-message" name="message" maxlength="2000" required></textarea><button class="button" type="submit">Отправить</button></form>
+  <h2>Отзывы</h2><div id="reviews"></div>
+  <form id="review-form"><label for="review-rating">Оценка</label><select id="review-rating" name="rating" required><option value="5">5 — отлично</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1 — плохо</option></select><label for="review-comment">Комментарий</label><textarea id="review-comment" name="comment" maxlength="2000"></textarea><button class="button" type="submit">Оставить отзыв</button></form>
+</section>
+{% endblock %}
