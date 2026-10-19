@@ -21,7 +21,8 @@ CREATE TABLE events (
     description TEXT,
     event_date TIMESTAMP NOT NULL,
     location VARCHAR(200),
-    is_inclusive BOOLEAN DEFAULT FALSE,
+    accessibility VARCHAR(500) DEFAULT '',
+    is_inclusive BOOLEAN DEFAULT TRUE,
     max_participants INTEGER DEFAULT 50,
     organizer_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
