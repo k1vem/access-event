@@ -72,7 +72,3 @@ document.addEventListener('DOMContentLoaded', function() {
 if (typeof module !== 'undefined') {
     module.exports = { showNotification, setupFormValidation };
 }
-      list.innerHTML = items.map(x => '<p class="status-banner status-' + (x.type.endsWith("confirmed") ? "confirmed" : x.type.endsWith("cancelled") ? "cancelled" : "pending") + '">' + esc(x.message || x.type.replaceAll("_", " ")) + '</p>').join("") || "<p>Новых уведомлений нет.</p>";
-    }).catch(error => showNotification(error.message, "error"));
-  }
-});
