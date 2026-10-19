@@ -58,7 +58,7 @@ def post_review(event_id):
 def get_notifications():
     rows = Notification.query.filter_by(user_id=g.current_user_id).order_by(Notification.created_at.desc()).all()
     return jsonify([{"id": x.id, "event_id": x.event_id, "type": x.type,
-                     "is_read": x.is_read, "created_at": x.created_at.isoformat()} for x in rows])
+                     "message": x.message or "", "is_read": x.is_read, "created_at": x.created_at.isoformat()} for x in rows])
 
 @communication_bp.patch("/notifications/<int:notification_id>")
 @token_required
