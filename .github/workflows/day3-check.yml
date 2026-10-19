@@ -25,4 +25,4 @@ jobs:
         env:
           TESTING: "1"
           SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
-        run: pytest -q
+        run: python -m pytest -q
