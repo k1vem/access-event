@@ -20,7 +20,7 @@ def register_for_event(event_id):
         item = Registration(user_id=g.current_user_id, event_id=event_id, status="pending")
         db.session.add(item)
     db.session.add(Notification(user_id=g.current_user_id, event_id=event_id,
-                                type="registration_pending", is_read=False))
+                                type="registration_pending", message="Заявка отправлена и ожидает подтверждения.", is_read=False))
     db.session.commit()
     return jsonify(item.to_dict()), 201
 
@@ -39,7 +39,7 @@ def review_registration(registration_id):
         return jsonify({"error": "Недопустимый статус"}), 400
     item.status = status
     db.session.add(Notification(user_id=item.user_id, event_id=item.event_id,
-                                type="registration_" + status, is_read=False))
+                                type="registration_" + status, message="Статус заявки изменён: " + status, is_read=False))
     db.session.commit()
     return jsonify(item.to_dict())
 
