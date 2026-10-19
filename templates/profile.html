@@ -6,6 +6,7 @@
 <div class="profile-container">
     <h1>Профиль пользователя</h1>
 
+    {% if user %}
     <div class="profile-card">
         <p><strong>Имя:</strong> {{ user.username }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
@@ -26,5 +27,8 @@
         <li>Вы пока не зарегистрированы ни на одно мероприятие.</li>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>Чтобы посмотреть профиль и свои регистрации, пожалуйста, <a href="{{ url_for('login_page') }}">войдите в аккаунт</a>.</p>
+    {% endif %}
 </div>
 {% endblock %}
