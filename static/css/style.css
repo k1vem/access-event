@@ -1,2 +1,320 @@
-:root{font-family:system-ui,sans-serif;color:#172033;background:#f5f7fb;line-height:1.6}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column}a{color:#174ea6}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e09b00;outline-offset:3px}.site-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem max(1rem,calc((100% - 1080px)/2));background:#102a43;color:white}.brand{color:white;font-weight:800;font-size:1.3rem;text-decoration:none}nav{display:flex;flex-wrap:wrap;gap:1rem}nav a{color:white;text-decoration:none}.container{width:min(1080px,calc(100% - 2rem));margin:2rem auto;flex:1}.hero{background:#e4efff;padding:clamp(2rem,6vw,5rem);border-radius:1.25rem}h1{line-height:1.2;font-size:clamp(2rem,5vw,3.4rem)}.eyebrow{color:#174ea6;text-transform:uppercase;font-weight:700;letter-spacing:.08em}.button{display:inline-block;border:0;border-radius:.55rem;padding:.75rem 1.1rem;margin-top:.5rem;background:#174ea6;color:white;font:inherit;font-weight:700;cursor:pointer;text-decoration:none}.button-secondary{background:#52606d}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.feature,.form-card,.event-card{background:white;padding:1.25rem;border-radius:.9rem;box-shadow:0 4px 16px #102a4310}.form-card{max-width:620px;margin:auto}form{display:grid;gap:.65rem}input,select{width:100%;min-height:2.75rem;padding:.55rem .7rem;border:1px solid #829ab1;border-radius:.45rem;background:white;font:inherit}.checkbox-label{display:flex;align-items:flex-start;gap:.6rem}.checkbox-label input{width:auto;min-height:auto}.search-form{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:.75rem;padding:1rem;background:white;border-radius:.8rem}.event-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.5rem}.event-card h2{font-size:1.25rem}.pill{display:inline-block;background:#e4efff;border-radius:1rem;padding:.15rem .6rem}.site-footer{text-align:center;padding:1rem;background:#e6edf5}.skip-link{position:absolute;left:-9999px;top:0;background:white;padding:.5rem}.skip-link:focus{left:.5rem;z-index:10}.notifications{position:fixed;right:1rem;bottom:1rem;max-width:min(26rem,calc(100% - 2rem))}.notification{background:#102a43;color:white;border-radius:.5rem;padding:.9rem 1rem;margin-top:.5rem}.empty-state{grid-column:1/-1;padding:1rem;background:white;border-radius:.75rem}@media(max-width:700px){.site-header{align-items:flex-start;flex-direction:column}.feature-grid,.event-list,.search-form{grid-template-columns:1fr}.container{margin-top:1rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
-.status-banner{padding:.75rem 1rem;border-radius:.5rem;margin:.75rem 0;background:#f0ad4e;color:#222}.status-pending{background:#f0ad4e}.status-confirmed{background:#5cb85c;color:#fff}.status-cancelled{background:#d9534f;color:#fff}.chat-messages{max-height:18rem;overflow:auto;padding:.75rem;background:#f5f7fb;border-radius:.5rem}.chat-message{padding:.5rem;border-bottom:1px solid #dce3ea}.status-banner:empty{display:none}
+/* ===== Базовые стили ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ 
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    color: #202124;
+    background-color: #f8f9fa;
+}
+ 
+header {
+    background-color: #1a73e8;
+    padding: 1rem 2rem;
+}
+ 
+nav {
+    display: flex;
+    gap: 1.5rem;
+}
+ 
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+}
+ 
+.nav-link:hover {
+    text-decoration: underline;
+}
+ 
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+ 
+footer {
+    background-color: #202124;
+    color: #ffffff;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+ 
+/* ===== Hero-блок главной ===== */
+.hero {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: #e8f0fe;
+    border-radius: 8px;
+}
+ 
+.hero h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+ 
+.hero p {
+    font-size: 1.1rem;
+    color: #5f6368;
+    margin-bottom: 1.5rem;
+}
+ 
+/* ===== Кнопки ===== */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    border: 1px solid #dadce0;
+    background-color: #ffffff;
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+ 
+.btn-primary {
+    background-color: #1a73e8;
+    color: #ffffff;
+    border-color: #1a73e8;
+}
+ 
+.btn-primary:hover {
+    background-color: #1667c7;
+}
+ 
+/* ===== Фичи на главной ===== */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+ 
+.feature-card {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+ 
+/* ===== Сетка мероприятий ===== */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+ 
+.event-card {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+ 
+.event-date {
+    color: #5f6368;
+    font-size: 0.9rem;
+}
+ 
+.badges {
+    margin: 0.75rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+ 
+/* ===== Бейджи статусов и условий ===== */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+ 
+.badge-inclusive {
+    background-color: #e6f4ea;
+    color: #188738;
+}
+ 
+.badge-slg {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
+ 
+.badge-visual {
+    background-color: #fef7e0;
+    color: #b06000;
+}
+ 
+.badge-pending {
+    background-color: #fef7e0;
+    color: #b06000;
+}
+ 
+.badge-confirmed {
+    background-color: #e6f4ea;
+    color: #188738;
+}
+ 
+.badge-cancelled {
+    background-color: #fce8e6;
+    color: #c5221f;
+}
+ 
+.badge-role {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
+ 
+/* ===== Формы ===== */
+.form-container {
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 2rem;
+}
+ 
+.form-group {
+    margin-bottom: 1.2rem;
+}
+ 
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+ 
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+ 
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: 2px solid #1a73e8;
+}
+ 
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+ 
+.checkbox-group input {
+    width: auto;
+}
+ 
+.checkbox-group label {
+    margin: 0;
+    font-weight: 400;
+}
+ 
+/* ===== Визуальные уведомления ===== */
+.notifications {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+ 
+.notification {
+    padding: 0.9rem 1.4rem;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: slide-in 0.3s ease;
+}
+ 
+.notification-success {
+    background-color: #188738;
+}
+ 
+.notification-error {
+    background-color: #c5221f;
+}
+ 
+.notification-info {
+    background-color: #1a73e8;
+}
+ 
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+ 
+/* ===== Профиль ===== */
+.profile-card {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+ 
+.registrations-list {
+    list-style: none;
+}
+ 
+.registrations-list li {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 0.5rem;
+}
+ 
+/* ===== Медиа-запросы: адаптивность ===== */
+ 
+/* Планшет — до 768px */
+@media (max-width: 768px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+}
+ 
+/* Телефон — до 480px */
+@media (max-width: 480px) {
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+    nav {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .hero {
+        padding: 2rem 0.5rem;
+    }
+    .hero h1 {
+        font-size: 1.25rem;
+    }
+}
