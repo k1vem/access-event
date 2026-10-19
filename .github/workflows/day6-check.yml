@@ -18,7 +18,7 @@ jobs:
           SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
         run: |
           python -m py_compile app.py config.py models.py routes/*.py utils/*.py
-          pytest -q
+          python -m pytest -q
       - name: Verify health endpoint and README
         env:
           TESTING: "1"
