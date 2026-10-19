@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Демонстрация интерфейса доступных мероприятий AccessEvent">
+  <title>AccessEvent — День 4</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <a class="brand" href="#home">AccessEvent</a>
+    <nav aria-label="Главное меню">
+      <a href="#home">Главная</a><a href="#events">Мероприятия</a><a href="#about">О проекте</a>
+    </nav>
+  </header>
+  <main id="main" class="container">
+    <section id="home" class="hero">
+      <p class="eyebrow">Инклюзивная платформа</p>
+      <h1>События, доступные каждому</h1>
+      <p>Находите мероприятия с субтитрами, визуальными инструкциями и текстовым общением.</p>
+      <a class="button" href="#events">Посмотреть мероприятия</a>
+    </section>
+    <section id="events" class="section">
+      <h2>Ближайшие мероприятия</h2>
+      <form id="search-form" class="search-form" role="search">
+        <div><label for="search">Поиск по названию</label><input id="search" type="search" placeholder="Например, выставка"></div>
+        <div><label for="access-filter">Доступность</label><select id="access-filter">
+          <option value="">Все варианты</option><option>Субтитры</option><option>Визуальные инструкции</option><option>Текстовый чат</option>
+        </select></div>
+        <button class="button" type="submit">Найти</button>
+        <button class="button secondary" id="reset-search" type="button">Сбросить</button>
+      </form>
+      <p id="result-message" aria-live="polite">Показаны все мероприятия.</p>
+      <div id="event-list" class="event-grid">
+        <article class="event-card" data-title="Выставка современного искусства" data-access="Субтитры">
+          <span class="tag">Субтитры</span><h3>Выставка современного искусства</h3>
+          <p>Знакомство с работами молодых художников.</p><p><strong>Дата:</strong> 22 октября, 14:00</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+        <article class="event-card" data-title="Мастер-класс по фотографии" data-access="Визуальные инструкции">
+          <span class="tag">Визуальные инструкции</span><h3>Мастер-класс по фотографии</h3>
+          <p>Практическое занятие с пошаговыми материалами.</p><p><strong>Дата:</strong> 25 октября, 12:00</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+        <article class="event-card" data-title="Встреча книжного клуба" data-access="Текстовый чат">
+          <span class="tag">Текстовый чат</span><h3>Встреча книжного клуба</h3>
+          <p>Обсуждение книги в удобном текстовом формате.</p><p><strong>Дата:</strong> 28 октября, 17:30</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+      </div>
+      <p id="empty-state" class="empty-state" hidden>Ничего не найдено. Измените параметры поиска.</p>
+    </section>
+    <section id="about" class="about section">
+      <h2>О проекте AccessEvent</h2>
+      <p>Учебная демонстрация поиска мероприятий и визуальных уведомлений. Выбор события не отправляется на сервер.</p>
+    </section>
+  </main>
+  <footer class="site-footer">AccessEvent · Учебный проект</footer>
+  <div id="notifications" class="notifications" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
