@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }).catch(error => showNotification(error.message, "error"));
     api("/notifications").then(items => {
       const list = document.getElementById("my-notifications");
-      list.innerHTML = items.map(x => '<p class="status-banner status-' + (x.type.endsWith("confirmed") ? "confirmed" : x.type.endsWith("cancelled") ? "cancelled" : "pending") + '">' + esc(x.type.replaceAll("_", " ")) + '</p>').join("") || "<p>Новых уведомлений нет.</p>";
+      list.innerHTML = items.map(x => '<p class="status-banner status-' + (x.type.endsWith("confirmed") ? "confirmed" : x.type.endsWith("cancelled") ? "cancelled" : "pending") + '">' + esc(x.message || x.type.replaceAll("_", " ")) + '</p>').join("") || "<p>Новых уведомлений нет.</p>";
     }).catch(error => showNotification(error.message, "error"));
   }
 });
