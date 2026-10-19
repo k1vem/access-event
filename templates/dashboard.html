@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет — AccessEvent{% endblock %}
+{% block content %}
+<section class="form-card">
+  <h1>Личный кабинет</h1>
+  <p id="dashboard-status">Войдите, чтобы увидеть свои мероприятия и уведомления.</p>
+  <h2>Мои регистрации</h2><ul id="my-registrations"></ul>
+  <h2>Визуальные уведомления</h2><div id="my-notifications" aria-live="polite"></div>
+  <button id="logout-button" class="button button-secondary" type="button">Выйти</button>
+</section>
+{% endblock %}
