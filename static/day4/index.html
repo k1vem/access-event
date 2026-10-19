@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>День 4 — Доступные мероприятия</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <p class="eyebrow">Учебный проект · День 4</p>
+      <h1>Доступные мероприятия</h1>
+      <p>Найди событие, которое подходит именно тебе.</p>
+    </div>
+  </header>
+  <main class="container">
+    <section class="filters" aria-label="Поиск мероприятий">
+      <label for="search">Поиск по названию</label>
+      <input id="search" type="search" placeholder="Например, выставка">
+      <label class="check-label"><input id="accessible" type="checkbox"> Только доступные площадки</label>
+      <button id="reset" type="button" class="button button-secondary">Сбросить фильтры</button>
+    </section>
+    <p id="result-count" aria-live="polite"></p>
+    <section id="events" class="event-grid" aria-label="Список мероприятий">
+      <article class="event-card" data-title="Выставка современного искусства" data-accessible="true">
+        <span class="tag">Доступная площадка</span><h2>Выставка современного искусства</h2>
+        <p>Знакомство с работами современных художников.</p><p class="event-meta">20 октября · 12:00</p>
+        <button class="button register-button" type="button">Записаться</button>
+      </article>
+      <article class="event-card" data-title="Лекция о городах" data-accessible="false">
+        <span class="tag tag-muted">Есть ограничения</span><h2>Лекция о городах</h2>
+        <p>Как меняется городская среда и общественные пространства.</p><p class="event-meta">22 октября · 18:00</p>
+        <button class="button register-button" type="button">Записаться</button>
+      </article>
+      <article class="event-card" data-title="Мастер-класс по фотографии" data-accessible="true">
+        <span class="tag">Доступная площадка</span><h2>Мастер-класс по фотографии</h2>
+        <p>Практика композиции и света для начинающих.</p><p class="event-meta">25 октября · 15:00</p>
+        <button class="button register-button" type="button">Записаться</button>
+      </article>
+    </section>
+    <p id="notification" class="notification" role="status" hidden></p>
+    <footer>Автор: Коновалова Катя, 22-ИС</footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
