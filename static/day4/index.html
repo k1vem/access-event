@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Учебная демонстрационная страница доступных мероприятий AccessEvent.">
+  <title>AccessEvent — День 4</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="AccessEvent — на главную">AccessEvent</a>
+    <nav aria-label="Главное меню">
+      <a href="#home">Главная</a>
+      <a href="#events">Мероприятия</a>
+      <a href="#features">Возможности</a>
+      <a href="#about">О проекте</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <section id="home" class="hero">
+      <p class="eyebrow">Инклюзивная платформа</p>
+      <h1>События, доступные каждому</h1>
+      <p class="hero-text">Находите мероприятия с субтитрами, сурдопереводом и удобными визуальными уведомлениями. Информация представлена понятно и доступно.</p>
+      <a class="button" href="#events">Посмотреть мероприятия</a>
+    </section>
+
+    <section id="features" class="section">
+      <h2>Что важно для доступности?</h2>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-number" aria-hidden="true">01</span>
+          <h3>Понятная информация</h3>
+          <p>У каждого события есть описание, дата и сведения об условиях участия.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-number" aria-hidden="true">02</span>
+          <h3>Визуальные уведомления</h3>
+          <p>Сообщения отображаются на странице и доступны для экранных дикторов.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-number" aria-hidden="true">03</span>
+          <h3>Удобная навигация</h3>
+          <p>Страница поддерживает клавиатурную навигацию и адаптируется под телефон.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="events" class="section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Афиша</p>
+          <h2>Ближайшие мероприятия</h2>
+        </div>
+        <p class="muted">Выберите интересующее событие</p>
+      </div>
+
+      <form id="search-form" class="search-form" role="search">
+        <div class="form-field">
+          <label for="search">Поиск по названию</label>
+          <input id="search" name="search" type="search" placeholder="Например, выставка" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="access-filter">Условия доступности</label>
+          <select id="access-filter" name="access-filter">
+            <option value="">Все варианты</option>
+            <option value="Субтитры">Субтитры</option>
+            <option value="Визуальные инструкции">Визуальные инструкции</option>
+            <option value="Текстовый чат">Текстовый чат</option>
+          </select>
+        </div>
+        <button class="button" type="submit">Найти</button>
+        <button class="button button-secondary" id="reset-search" type="button">Сбросить</button>
+      </form>
+      <p id="result-message" class="result-message" aria-live="polite">Показаны все мероприятия.</p>
+
+      <div id="event-list" class="event-grid">
+        <article class="event-card" data-title="Выставка современного искусства" data-access="Субтитры">
+          <div class="card-top"><span class="tag">Субтитры</span><span class="event-type">Выставка</span></div>
+          <h3>Выставка современного искусства</h3>
+          <p>Знакомство с работами молодых художников и обсуждение экспозиции.</p>
+          <p class="event-meta"><strong>Дата:</strong> 22 октября, 14:00</p>
+          <p class="event-meta"><strong>Место:</strong> Городской выставочный зал</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+        <article class="event-card" data-title="Мастер-класс по фотографии" data-access="Визуальные инструкции">
+          <div class="card-top"><span class="tag">Визуальные инструкции</span><span class="event-type">Мастер-класс</span></div>
+          <h3>Мастер-класс по фотографии</h3>
+          <p>Практическое занятие для начинающих с пошаговыми визуальными материалами.</p>
+          <p class="event-meta"><strong>Дата:</strong> 25 октября, 12:00</p>
+          <p class="event-meta"><strong>Место:</strong> Молодёжный центр</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+        <article class="event-card" data-title="Встреча книжного клуба" data-access="Текстовый чат">
+          <div class="card-top"><span class="tag">Текстовый чат</span><span class="event-type">Встреча</span></div>
+          <h3>Встреча книжного клуба</h3>
+          <p>Обсуждаем выбранную книгу, делимся мнениями и задаём вопросы в текстовом формате.</p>
+          <p class="event-meta"><strong>Дата:</strong> 28 октября, 17:30</p>
+          <p class="event-meta"><strong>Место:</strong> Библиотека</p>
+          <button class="button register-button" type="button">Выбрать мероприятие</button>
+        </article>
+      </div>
+      <p id="empty-state" class="empty-state" hidden>По выбранным параметрам мероприятий не найдено. Попробуйте изменить запрос.</p>
+    </section>
+
+    <section id="about" class="about-panel section">
+      <p class="eyebrow">О проекте</p>
+      <h2>Для чего нужен AccessEvent?</h2>
+      <p>AccessEvent — учебный проект, который помогает заранее узнать об условиях доступности мероприятий и выбрать подходящее событие. Эта страница демонстрирует поиск, фильтрацию и визуальные уведомления без отправки данных на сервер.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>AccessEvent · Учебный проект</p>
+    <a href="#home">Вернуться наверх ↑</a>
+  </footer>
+  <div id="notifications" class="notifications" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
