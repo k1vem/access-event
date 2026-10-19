@@ -11,11 +11,12 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Check templates and static assets
         run: |
-          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html static/css/style.css static/js/main.js Dockerfile docker-compose.yml .dockerignore; do test -f "$f" || exit 1; done
+          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html templates/dashboard.html templates/event_detail.html static/css/style.css static/js/main.js Dockerfile docker-compose.yml .dockerignore; do test -f "$f" || exit 1; done
           test "$(wc -c < static/css/style.css)" -ge 300
           test "$(wc -c < static/js/main.js)" -ge 200
           grep -q "@media" static/css/style.css
           grep -q "showNotification" static/js/main.js
+          grep -q "#5cb85c" static/css/style.css
           grep -l "aria-label" templates/*.html
           grep -l "role=" templates/*.html
           grep -q "^FROM" Dockerfile
