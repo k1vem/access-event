@@ -13,9 +13,9 @@
 - Паттерн: MVC (Model-View-Controller)
 
 ### Слой данных
-- СУБД: PostgreSQL 15
+- СУБД: PostgreSQL 16
 - Таблицы: users, events, registrations, messages, event_categories,
-  event_category_link, notifications
+  event_category_link, notifications, reviews
 
 ## 2. Клиент-серверное взаимодействие
 - GET /events — список мероприятий
