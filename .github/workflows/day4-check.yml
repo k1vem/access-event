@@ -1,0 +1,87 @@
+﻿name: Day4 Frontend Check
+
+on: push
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check templates
+        run: |
+          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html; do
+            if [ ! -f "$f" ]; then echo "FAIL: $f не найден"; exit 1; fi
+            echo "PASS: $f"
+          done
+
+      - name: Check static
+        run: |
+          for f in static/css/style.css static/js/main.js; do
+            if [ ! -f "$f" ]; then echo "FAIL: $f не найден"; exit 1; fi
+            echo "PASS: $f"
+          done
+          SIZE_CSS=$(wc -c < static/css/style.css)
+          SIZE_JS=$(wc -c < static/js/main.js)
+          echo "style.css bytes: $SIZE_CSS (need >= 300)"
+          echo "main.js bytes: $SIZE_JS (need >= 200)"
+          if [ "$SIZE_CSS" -lt 300 ]; then echo "FAIL: style.css слишком мал"; exit 1; fi
+          if [ "$SIZE_JS" -lt 200 ]; then echo "FAIL: main.js слишком мал"; exit 1; fi
+
+      - name: Check media queries in CSS
+        run: |
+          if grep -q "@media" static/css/style.css; then
+            echo "PASS: media queries found"
+          else
+            echo "FAIL: no media queries"
+            exit 1
+          fi
+
+      - name: Check showNotification in JS
+        run: |
+          if grep -q "showNotification" static/js/main.js; then
+            echo "PASS: showNotification found"
+          else
+            echo "FAIL: no showNotification"
+            exit 1
+          fi
+
+      - name: Check ARIA attributes
+        run: |
+          if grep -l "aria-label" templates/*.html > /dev/null; then
+            echo "PASS: aria-label found"
+          else
+            echo "FAIL: no aria-label"
+            exit 1
+          fi
+          if grep -l "role=" templates/*.html > /dev/null; then
+            echo "PASS: role attribute found"
+          else
+            echo "FAIL: no role attribute"
+            exit 1
+          fi
+
+      - name: Check Dockerfile
+        run: |
+          for keyword in "^FROM" "^COPY" "^CMD"; do
+            if grep -q "$keyword" Dockerfile; then
+              echo "PASS: $keyword found"
+            else
+              echo "FAIL: no $keyword"
+              exit 1
+            fi
+          done
+
+      - name: Check docker-compose.yml
+        run: |
+          if grep -q "services" docker-compose.yml; then echo "PASS: services"; else echo "FAIL: no services"; exit 1; fi
+          if grep -q "postgres" docker-compose.yml; then echo "PASS: postgres"; else echo "FAIL: no postgres"; exit 1; fi
+
+      - name: Check .dockerignore
+        run: |
+          if [ -f .dockerignore ]; then echo "PASS: .dockerignore exists"; else echo "FAIL: no .dockerignore"; exit 1; fi
+
+      - name: Syntax check app.py
+        run: python -m py_compile app.py
+
+      - run: echo "PASS: Day4 Frontend Check completed"

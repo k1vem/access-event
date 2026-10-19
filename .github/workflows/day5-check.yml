@@ -1,0 +1,35 @@
+name: Day5 Check
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt pytest
+
+      - name: Check tests exist
+        run: |
+          test -f tests/conftest.py || (echo "FAIL: conftest.py missing" && exit 1)
+          test -f tests/test_models.py || (echo "FAIL: test_models.py missing" && exit 1)
+          test -f tests/test_api.py || (echo "FAIL: test_api.py missing" && exit 1)
+
+      - name: Check docs exist
+        run: |
+          for f in docs/test_cases.md docs/bug_reports.md docs/user_manual.md docs/admin_manual.md docs/api.md docs/assessment.md; do
+            test -f "$f" || (echo "FAIL: $f missing" && exit 1)
+          done
+
+      - name: Run tests
+        env:
+          TESTING: "1"
+          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+        run: pytest -v
+
+      - run: echo "PASS: Day 5 checks completed"
