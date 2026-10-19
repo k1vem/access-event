@@ -1,14 +1,6 @@
 name: Day 2 Check
 
-on:
-  push:
-    paths:
-      - 'docs/**'
-      - '.github/workflows/day2-check.yml'
-  pull_request:
-    paths:
-      - 'docs/**'
-      - '.github/workflows/day2-check.yml'
+on: [push, pull_request]
 
 jobs:
   check-day2:
