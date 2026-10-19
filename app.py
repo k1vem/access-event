@@ -2,7 +2,7 @@ import os
 from flask import Flask, jsonify, render_template
 from config import get_config
 from models import db
-from routes.auth import auth_bp
+from routes.auth import auth_bp, register as register_user, login as login_user
 from routes.events import events_bp
 from routes.registrations import registrations_bp
 from routes.communication import communication_bp
@@ -17,6 +17,14 @@ def create_app(config_object=None):
     app.register_blueprint(events_bp)
     app.register_blueprint(registrations_bp)
     app.register_blueprint(communication_bp)
+
+    @app.post("/api/register")
+    def register_alias():
+        return register_user()
+
+    @app.post("/api/login")
+    def login_alias():
+        return login_user()
 
     @app.get("/health")
     def health():
