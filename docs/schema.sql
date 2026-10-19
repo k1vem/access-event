@@ -51,7 +51,7 @@ CREATE TABLE messages (
 -- Таблица: Категории мероприятий
 CREATE TABLE event_categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT
 );
 
@@ -69,6 +69,7 @@ CREATE TABLE notifications (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
     type VARCHAR(50) NOT NULL,
+    message TEXT DEFAULT '',
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
