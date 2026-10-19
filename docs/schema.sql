@@ -78,3 +78,16 @@ CREATE INDEX idx_events_inclusive ON events(is_inclusive);
 CREATE INDEX idx_registrations_user ON registrations(user_id);
 CREATE INDEX idx_messages_event ON messages(event_id);
 CREATE INDEX idx_notifications_user ON notifications(user_id, is_read);
+
+
+-- Таблица: Отзывы (8-я таблица по требованиям практики)
+CREATE TABLE reviews (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, event_id)
+);
+CREATE INDEX idx_reviews_event ON reviews(event_id);
