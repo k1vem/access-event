@@ -1,28 +1,36 @@
-name: Day 3 Backend Check
-on: [push, pull_request]
+name: Day 3 - Backend and API Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTING: "1"
+      SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements.txt
-      - name: Verify backend files
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check backend files
+        shell: bash
         run: |
-          for f in app.py config.py models.py routes/auth.py routes/events.py routes/registrations.py utils/auth_helpers.py utils/accessibility.py; do test -f "$f" || exit 1; done
+          set -euo pipefail
+          for file in app.py config.py models.py routes/auth.py routes/events.py routes/registrations.py routes/communication.py utils/auth_helpers.py utils/accessibility.py; do
+            test -s "$file" || { echo "::error::Missing backend file: $file"; exit 1; }
+          done
       - name: Compile Python
-        run: python -m py_compile app.py config.py models.py routes/*.py utils/*.py
-      - name: Check security and accessibility helpers
-        run: |
-          grep -q "hash_password" utils/auth_helpers.py
-          grep -q "generate_token" utils/auth_helpers.py
-          grep -q "role_required" utils/auth_helpers.py
-          grep -q "accessibility" utils/accessibility.py
-      - name: Run backend tests
-        env:
-          TESTING: "1"
-          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+        run: python -m compileall -q app.py config.py models.py routes utils
+      - name: Run pytest
         run: python -m pytest -q
