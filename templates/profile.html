@@ -1,24 +1,13 @@
 {% extends "base.html" %}
-<<<<<<< HEAD
 {% block title %}Профиль — AccessEvent{% endblock %}
 {% block content %}
 <div class="profile-container">
     <h1>Профиль пользователя</h1>
-=======
-
-{% block title %}Профиль — AccessEvent{% endblock %}
-
-{% block content %}
-<div class="profile-container">
-    <h1>Профиль пользователя</h1>
-
     {% if user %}
->>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
     <div class="profile-card">
         <p><strong>Имя:</strong> {{ user.username }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
         <p><strong>Роль:</strong> <span class="badge badge-role">{{ user.role }}</span></p>
-<<<<<<< HEAD
         {% if user.is_deaf %}<p><span class="badge badge-inclusive">Сурдоперевод нужен</span></p>{% endif %}
     </div>
     <h2>Мои регистрации</h2>
@@ -27,28 +16,8 @@
         <li>Мероприятие #{{ reg.event_id }} — статус: <span class="badge badge-{{ reg.status }}">{{ reg.status }}</span></li>
         {% else %}<li>Вы пока не зарегистрированы.</li>{% endfor %}
     </ul>
-</div>
-{% endblock %}
-=======
-        {% if user.is_deaf %}
-        <p><span class="badge badge-inclusive">Сурдоперевод нужен</span></p>
-        {% endif %}
-    </div>
-
-    <h2>Мои регистрации</h2>
-    <ul class="registrations-list">
-        {% for reg in registrations %}
-        <li>
-            Мероприятие #{{ reg.event_id }} — статус:
-            <span class="badge badge-{{ reg.status }}">{{ reg.status }}</span>
-        </li>
-        {% else %}
-        <li>Вы пока не зарегистрированы ни на одно мероприятие.</li>
-        {% endfor %}
-    </ul>
     {% else %}
-    <p>Чтобы посмотреть профиль и свои регистрации, пожалуйста, <a href="{{ url_for('login_page') }}">войдите в аккаунт</a>.</p>
+    <p>Чтобы посмотреть профиль и свои регистрации, <a href="{{ url_for('login_page') }}">войдите в аккаунт</a>.</p>
     {% endif %}
 </div>
 {% endblock %}
->>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
