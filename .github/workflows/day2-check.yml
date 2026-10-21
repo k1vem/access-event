@@ -86,7 +86,7 @@ jobs:
         run: |
           set -euo pipefail
           for role in guest user organizer admin; do
-            grep -Eiq "\\b${role}\\b" docs/security.md || {
+            grep -Eiq "(^|[^[:alnum:]_])${role}([^[:alnum:]_]|$)" docs/security.md || {
               echo "::error::Role '$role' is missing from docs/security.md"
               exit 1
             }
