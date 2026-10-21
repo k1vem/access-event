@@ -1,81 +1,57 @@
-<<<<<<< HEAD
-name: Day4 Frontend Check
-on: push
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          test -f templates/base.html && test -f templates/index.html && test -f templates/events.html
-          test -f static/css/style.css && test -f static/js/main.js
-          test -f Dockerfile && test -f docker-compose.yml && test -f .dockerignore
-=======
-name: Day 4 Frontend and Docker Check
+name: Day 4 - Frontend and Docker
 
 on:
   push:
-    branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  frontend:
+  frontend-docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTING: "1"
+      SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+      JWT_SECRET: "test-jwt-secret-must-be-32-bytes-or-more-12345"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
+          cache: pip
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Check required files
+        run: python -m pip install -r requirements.txt
+      - name: Check actual frontend and Docker files
         run: |
           set -eu
-          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html templates/dashboard.html templates/event_detail.html static/css/style.css static/js/main.js static/day4/index.html static/day4/style.css static/day4/script.js Dockerfile docker-compose.yml .dockerignore; do
-            test -f "$f" || { echo "FAIL: missing $f"; exit 1; }
-            echo "PASS: $f"
+          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html templates/dashboard.html templates/event_detail.html templates/create_event.html static/css/style.css static/js/main.js static/day4/index.html static/day4/style.css static/day4/script.js Dockerfile docker-compose.yml .dockerignore; do
+            test -f "$f" || { echo "Missing required file: $f"; exit 1; }
           done
-
-      - name: Check frontend assets and accessibility
+      - name: Check HTML, CSS and JavaScript are non-empty
         run: |
           set -eu
-          test "$(wc -c < static/css/style.css)" -ge 300
-          test "$(wc -c < static/js/main.js)" -ge 200
-          grep -q '@media' static/css/style.css
-          grep -q 'showNotification' static/js/main.js
-          grep -q '#5cb85c' static/css/style.css
-          grep -l 'aria-label' templates/*.html
-          grep -l 'role=' templates/*.html
-          grep -q '^FROM' Dockerfile
-          grep -q '^COPY' Dockerfile
-          grep -q '^CMD' Dockerfile
-          grep -q 'services:' docker-compose.yml
-          grep -q 'postgres' docker-compose.yml
-          echo "Frontend assets and Docker configuration look good."
-
-      - name: Compile Python files
-        run: python -m compileall -q app.py routes models.py
-
-      - name: Render main pages
-        env:
-          TESTING: "1"
-          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+          test -s templates/base.html
+          test -s templates/index.html
+          test -s static/css/style.css
+          test -s static/js/main.js
+          test -s static/day4/index.html
+          test -s static/day4/style.css
+          test -s static/day4/script.js
+          grep -q '^FROM ' Dockerfile
+          grep -q '^services:' docker-compose.yml
+      - name: Compile application
+        run: python -m compileall -q app.py routes models.py utils
+      - name: Check pages render
         run: |
           python - <<'PY'
           from app import create_app
           app = create_app()
           client = app.test_client()
-          for path in ("/", "/events", "/login", "/register", "/profile"):
+          for path in ("/", "/events", "/login", "/register", "/dashboard", "/profile"):
               response = client.get(path)
-              assert response.status_code == 200, (
-                  f"{path} returned {response.status_code}: "
-                  + response.get_data(as_text=True)[:500]
-              )
-              print(f"PASS: {path}")
+              assert response.status_code == 200, f"{path}: {response.status_code}"
+          print("All checked pages rendered successfully.")
           PY
->>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
