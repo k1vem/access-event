@@ -1,0 +1,27 @@
+﻿name: Day 2 Check
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/day2-check.yml'
+jobs:
+  check-day2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check file structure
+        run: |
+          for f in docs/schema.sql docs/security.md docs/architecture.md docs/er_diagram.png; do
+            if [ ! -f "$f" ]; then exit 1; fi
+          done
+      - name: Check file sizes
+        run: |
+          for f in docs/schema.sql docs/security.md docs/architecture.md; do
+            size=$(wc -c < "$f")
+            if [ "$size" -lt 300 ]; then exit 1; fi
+          done
+      - name: Check roles in security.md
+        run: |
+          for role in guest user organizer admin; do
+            if ! grep -qi "$role" docs/security.md; then exit 1; fi
+          done

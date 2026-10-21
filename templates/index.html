@@ -1,9 +1,16 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
 {% block title %}AccessEvent — главная{% endblock %}
+=======
+
+{% block title %}AccessEvent — главная{% endblock %}
+
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
 {% block content %}
 <section class="hero">
     <h1>Платформа инклюзивных мероприятий</h1>
     <p>Находите события с сурдопереводом, визуальными оповещениями и доступной средой.</p>
+<<<<<<< HEAD
     <a href="{{ url_for('events_page') }}" class="btn btn-primary" aria-label="Перейти к списку мероприятий">Смотреть мероприятия</a>
 </section>
 <section class="features">
@@ -12,3 +19,25 @@
     <div class="feature-card"><h2>♿ Доступность</h2><p>Каждое событие указывает, какие условия доступности предоставлены.</p></div>
 </section>
 {% endblock %}
+=======
+    <a href="{{ url_for('events_page') }}" class="btn btn-primary" aria-label="Перейти к списку мероприятий">
+        Смотреть мероприятия
+    </a>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h2>🔔 Уведомления</h2>
+        <p>Все уведомления визуальные — никаких звуковых сигналов.</p>
+    </div>
+    <div class="feature-card">
+        <h2>🤟 Сурдоперевод</h2>
+        <p>Мероприятия с жестовым переводом помечены специальным бейджем.</p>
+    </div>
+    <div class="feature-card">
+        <h2>♿ Доступность</h2>
+        <p>Каждое событие указывает, какие условия доступности предоставлены.</p>
+    </div>
+</section>
+{% endblock %}
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

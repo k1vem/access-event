@@ -1,22 +1,60 @@
 name: Build and Publish Docker Image
+<<<<<<< HEAD
 on:
   push:
     branches: [main]
 permissions:
   packages: write
   contents: read
+=======
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  packages: write
+  contents: read
+
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
       - uses: docker/login-action@v3
+=======
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+<<<<<<< HEAD
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/accessevent:latest
+=======
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/accessevent:latest
+            ghcr.io/${{ github.repository_owner }}/accessevent:${{ github.sha }}
+
+      - name: Summary
+        run: echo "PASS: Docker image built and published to GHCR"
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

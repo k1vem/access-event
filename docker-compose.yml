@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 version: "3.8"
+=======
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
 services:
   web:
     build: .
     ports:
       - "5000:5000"
     environment:
+<<<<<<< HEAD
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/accessevent
       - SECRET_KEY=your-secret-key-change-me-in-production
     depends_on:
@@ -21,3 +25,26 @@ services:
       - "5433:5432"
 volumes:
   postgres_data:
+=======
+      DATABASE_URL: postgresql+psycopg2://accessevent:accessevent@postgres:5432/accessevent
+      SECRET_KEY: ${SECRET_KEY:-local-development-change-me}
+      JWT_SECRET: ${JWT_SECRET:-local-jwt-change-me}
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: accessevent
+      POSTGRES_USER: accessevent
+      POSTGRES_PASSWORD: accessevent
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accessevent -d accessevent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  postgres_data:
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

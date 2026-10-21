@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 flask>=3.0
 flask-sqlalchemy>=3.1
 psycopg2-binary>=2.9
 pyjwt>=2.8
 python-dotenv>=1.0
 pytest>=8.0
+=======
+flask>=3.0,<4.0
+flask-sqlalchemy>=3.1,<4.0
+psycopg2-binary>=2.9
+pyjwt>=2.8
+python-dotenv>=1.0
+pytest>=8.0
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

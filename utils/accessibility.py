@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 def format_event_response(event):
     return {
         "id": event.id,
@@ -12,3 +13,12 @@ def format_event_response(event):
             "visual_alerts": event.visual_alerts,
         },
     }
+=======
+def accessibility_matches(event_features, requested_features):
+    offered = {x.strip().casefold() for x in (event_features or "").split(",") if x.strip()}
+    requested = {x.strip().casefold() for x in (requested_features or []) if x.strip()}
+    return requested.issubset(offered)
+
+def accessibility_summary(features):
+    return features or "Информация о доступности уточняется"
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

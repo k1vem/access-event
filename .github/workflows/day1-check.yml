@@ -1,0 +1,34 @@
+﻿name: Day 1 Check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files
+        run: |
+          for f in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md; do
+            if [ -f "$f" ]; then
+              SIZE=$(wc -c < "$f")
+              if [ "$SIZE" -lt 40 ]; then exit 1; fi
+            else
+              exit 1
+            fi
+          done
+      - name: Check User Stories
+        run: |
+          COUNT=$(grep -c "Как " docs/requirements.md || echo 0)
+          if [ "$COUNT" -lt 10 ]; then exit 1; fi
+      - name: Check NFR
+        run: |
+          COUNT=$(grep -c "NFR-" docs/requirements.md || echo 0)
+          if [ "$COUNT" -lt 5 ]; then exit 1; fi
+      - name: Check TZ sections
+        run: |
+          for section in "Назначение" "предметной области" "функции" "качеств" "интерфей" "данны" "стек" "Ограничен"; do
+            if ! grep -qi "$section" docs/tz.md; then exit 1; fi
+          done
+      - name: Check entities
+        run: |
+          COUNT=$(grep -c "|" docs/analysis.md || echo 0)
+          if [ "$COUNT" -lt 6 ]; then exit 1; fi

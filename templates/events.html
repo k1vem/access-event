@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 {% block title %}Мероприятия — AccessEvent{% endblock %}
 {% block content %}
@@ -28,3 +29,6 @@
     {% endfor %}
 </div>
 {% endblock %}
+=======
+{% extends "base.html" %}{% block title %}Мероприятия — AccessEvent{% endblock %}{% block content %}<h1>Каталог мероприятий</h1><form id="event-search" class="search-form" role="search"><label for="search-query">Название мероприятия</label><input id="search-query" name="q" type="search" placeholder="Например, выставка"><label for="accessibility-filter">Функция доступности</label><select id="accessibility-filter" name="accessibility"><option value="">Все варианты</option><option value="сурдоперевод">Сурдоперевод</option><option value="субтитры">Субтитры</option><option value="текстовый чат">Текстовый чат</option><option value="визуальные уведомления">Визуальные уведомления</option></select><button class="button" type="submit">Найти</button></form><div id="events-list" class="event-list" aria-live="polite">Загрузка…</div>{% endblock %}
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

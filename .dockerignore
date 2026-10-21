@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 venv
 __pycache__
 *.pyc
@@ -7,3 +8,14 @@ __pycache__
 .gitignore
 *.md
 README.md
+=======
+.git
+.github
+__pycache__
+*.py[cod]
+.pytest_cache
+.venv
+venv
+.env
+tests
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6

@@ -9,6 +9,7 @@
 <body>
     <header role="banner">
         <nav aria-label="Главное меню">
+<<<<<<< HEAD
             <a href="{{ url_for('index_page') }}" class="nav-link">Главная</a>
             <a href="{{ url_for('events_page') }}" class="nav-link">Мероприятия</a>
             {% if session.get('user_id') %}
@@ -17,6 +18,12 @@
                 <a href="{{ url_for('login_page') }}" class="nav-link" style="margin-left: auto;">Вход</a>
                 <a href="{{ url_for('register_page') }}" class="nav-link">Регистрация</a>
             {% endif %}
+=======
+            <a href="{{ url_for('index') }}" class="nav-link">Главная</a>
+            <a href="{{ url_for('events_page') }}" class="nav-link">Мероприятия</a>
+            <a href="{{ url_for('login_page') }}" class="nav-link">Вход</a>
+            <a href="{{ url_for('register_page') }}" class="nav-link">Регистрация</a>
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
         </nav>
     </header>
     <main role="main">
@@ -30,4 +37,8 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
