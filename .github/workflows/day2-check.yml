@@ -1,27 +1,15 @@
-name: Day 2 Check
+name: Day 2 - Database and Security
 
 on:
   push:
-    paths:
-      - ".github/workflows/day2-check.yml"
-      - "docs/schema.sql"
-      - "docs/security.md"
-      - "docs/architecture.md"
-      - "docs/er_diagram.png"
   pull_request:
-    paths:
-      - ".github/workflows/day2-check.yml"
-      - "docs/schema.sql"
-      - "docs/security.md"
-      - "docs/architecture.md"
-      - "docs/er_diagram.png"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  check-day2:
+  database-security:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     services:
@@ -38,61 +26,42 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Check required documentation
+      - uses: actions/checkout@v4
+      - name: Check Day 2 files
         shell: bash
         run: |
           set -euo pipefail
           for file in docs/schema.sql docs/security.md docs/architecture.md docs/er_diagram.png; do
-            if [[ ! -s "$file" ]]; then
-              echo "::error::Required file is missing or empty: $file"
-              exit 1
-            fi
+            test -s "$file" || { echo "::error::Missing or empty file: $file"; exit 1; }
           done
-
       - name: Install PostgreSQL client
         run: |
           sudo apt-get update
           sudo apt-get install --yes postgresql-client
-
-      - name: Execute database schema
+      - name: Execute schema
         env:
           PGPASSWORD: postgres
-        run: |
-          psql --set ON_ERROR_STOP=1             --host 127.0.0.1 --username postgres --dbname testdb             --file docs/schema.sql
-
+        run: psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d testdb -f docs/schema.sql
       - name: Verify tables and foreign keys
         env:
           PGPASSWORD: postgres
         shell: bash
         run: |
           set -euo pipefail
-          tables="$(psql -At --host 127.0.0.1 --username postgres --dbname testdb             --command "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';")"
-          foreign_keys="$(psql -At --host 127.0.0.1 --username postgres --dbname testdb             --command "SELECT count(*) FROM information_schema.table_constraints WHERE constraint_type='FOREIGN KEY' AND table_schema='public';")"
-
-          echo "Tables created: $tables"
-          echo "Foreign keys created: $foreign_keys"
-          [[ "$tables" =~ ^[0-9]+$ ]] || { echo "::error::Could not read table count"; exit 1; }
-          [[ "$foreign_keys" =~ ^[0-9]+$ ]] || { echo "::error::Could not read foreign-key count"; exit 1; }
-          (( tables >= 5 ))
-          (( foreign_keys >= 5 ))
-
-      - name: Verify roles and security documentation
+          tables="$(psql -At -h 127.0.0.1 -U postgres -d testdb -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';")"
+          fks="$(psql -At -h 127.0.0.1 -U postgres -d testdb -c "SELECT count(*) FROM information_schema.table_constraints WHERE constraint_type='FOREIGN KEY' AND table_schema='public';")"
+          echo "Tables=$tables foreign_keys=$fks"
+          (( tables >= 7 )) || { echo "::error::Expected at least 7 tables"; exit 1; }
+          (( fks >= 5 )) || { echo "::error::Expected at least 5 foreign keys"; exit 1; }
+      - name: Verify security documentation
         shell: bash
         run: |
           set -euo pipefail
           for role in guest user organizer admin; do
-            grep -Eiq "(^|[^[:alnum:]_])${role}([^[:alnum:]_]|$)" docs/security.md || {
-              echo "::error::Role '$role' is missing from docs/security.md"
-              exit 1
-            }
+            grep -Eiq "(^|[^[:alnum:]_])${role}([^[:alnum:]_]|$)" docs/security.md || { echo "::error::Role missing: ${role}"; exit 1; }
           done
           grep -Eiq "JWT" docs/security.md
           grep -Eiq "хеш" docs/security.md
-
       - name: Finish
-        run: echo All-Day-2-checks-passed
+        run: echo Day-2-checks-passed
