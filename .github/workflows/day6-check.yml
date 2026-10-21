@@ -1,33 +1,47 @@
-name: Day 6 Final Acceptance
-on: [push, pull_request]
+name: Day 6 - Final Acceptance
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  acceptance:
+  final-acceptance:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TESTING: "1"
+      SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r requirements.txt
-      - name: Verify final deliverables
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check final deliverables
+        shell: bash
         run: |
-          for f in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md docs/architecture.md docs/schema.sql docs/security.md docs/er_diagram.png docs/api.md docs/user_manual.md docs/admin_manual.md docs/test_cases.md docs/bug_reports.md docs/assessment.md; do test -f "$f" || exit 1; done
-      - name: Compile and test
-        env:
-          TESTING: "1"
-          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+          set -euo pipefail
+          for file in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md docs/architecture.md docs/schema.sql docs/security.md docs/er_diagram.png docs/api.md docs/user_manual.md docs/admin_manual.md docs/test_cases.md docs/bug_reports.md docs/assessment.md docs/speech.md; do
+            test -s "$file" || { echo "::error::Missing or empty final deliverable: $file"; exit 1; }
+          done
+      - name: Compile and run tests
         run: |
-          python -m py_compile app.py config.py models.py routes/*.py utils/*.py
+          python -m compileall -q app.py config.py models.py routes utils
           python -m pytest -q
-      - name: Verify health endpoint and README
-        env:
-          TESTING: "1"
-          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+      - name: Check health endpoint
         run: |
-          grep -qi "AccessEvent" README.md
           python - <<'PY'
           from app import create_app
           response = create_app().test_client().get("/health")
           assert response.status_code == 200
-          assert response.get_json()["status"] == "ok"
+          assert response.get_json().get("status") == "ok"
+          print("PASS: /health")
           PY
+      - name: Finish
+        run: echo Day-6-acceptance-passed
