@@ -1,0 +1,57 @@
+name: Day 6 - Final Acceptance
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  final-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTING: "1"
+      SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
+      JWT_SECRET: "test-jwt-secret-must-be-32-bytes-or-more-12345"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check final documentation
+        run: |
+          set -eu
+          for f in README.md docs/assessment.md docs/speech.md docs/user_manual.md docs/admin_manual.md docs/api.md docs/test_cases.md docs/bug_reports.md; do
+            test -s "$f" || { echo "Missing or empty final document: $f"; exit 1; }
+          done
+      - name: Compile application
+        run: python -m compileall -q app.py config.py models.py routes utils tests
+      - name: Run automated tests
+        run: python -m pytest -q
+      - name: Verify health endpoint and main pages
+        run: |
+          python - <<'PY'
+          from app import create_app
+          app = create_app()
+          client = app.test_client()
+          health = client.get("/health")
+          assert health.status_code == 200, f"/health returned {health.status_code}"
+          assert health.get_json().get("status") == "ok"
+          for path in ("/", "/events", "/login", "/register", "/dashboard", "/profile"):
+              response = client.get(path)
+              assert response.status_code == 200, f"{path} returned {response.status_code}"
+          print("Health endpoint and main pages passed.")
+          PY
+      - name: Note presentation artifact
+        run: |
+          if [ -s docs/presentation.pptx ]; then
+            echo "Presentation found."
+          else
+            echo "::warning::docs/presentation.pptx is not in the repository yet."
+          fi
