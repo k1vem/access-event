@@ -95,4 +95,4 @@ jobs:
           grep -Eiq "хеш" docs/security.md
 
       - name: Finish
-        run: echo "All Day 2 checks passed."
+        run: printf '%s\\n' 'All Day 2 checks passed.'
