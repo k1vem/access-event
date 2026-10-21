@@ -1,13 +1,10 @@
 name: Day 5 - Tests and Documentation
-
 on:
   push:
   pull_request:
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   tests-docs:
     runs-on: ubuntu-latest
@@ -15,19 +12,20 @@ jobs:
     env:
       TESTING: "1"
       SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
-      DATABASE_URL: "sqlite:///:memory:"
+      JWT_SECRET: "test-jwt-secret-must-be-32-bytes-or-more-12345"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
       - name: Install dependencies
-        run: python -m pip install --upgrade pip && pip install -r requirements.txt
-      - name: Check test and documentation files
+        run: python -m pip install -r requirements.txt
+      - name: Verify test and documentation files
         run: |
           set -eu
           for f in tests/conftest.py tests/test_models.py tests/test_api.py docs/test_cases.md docs/bug_reports.md docs/user_manual.md docs/admin_manual.md docs/api.md docs/assessment.md; do
-            test -f "$f" || { echo "Missing $f"; exit 1; }
+            test -s "$f" || { echo "Missing or empty file: $f"; exit 1; }
           done
       - name: Run automated tests
-        run: python -m pytest -q
+        run: python -m pytest -v
