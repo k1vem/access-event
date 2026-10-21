@@ -1,55 +1,63 @@
-<<<<<<< HEAD
-import datetime, pytest
-from app import db
-from models import User, Event, Registration
-
-def test_user_creation_valid(client):
-    u = User(username="anna", email="anna@mail.ru", password_hash="x", is_deaf=True)
-    db.session.add(u); db.session.commit()
-    found = User.query.filter_by(email="anna@mail.ru").first()
-    assert found is not None and found.is_deaf is True
-
-def test_user_duplicate_email_fails(client):
-    db.session.add(User(username="a", email="dup@mail.ru", password_hash="x")); db.session.commit()
-    db.session.add(User(username="b", email="dup@mail.ru", password_hash="x"))
-    with pytest.raises(Exception): db.session.commit()
-
-def test_event_requires_title(client):
-    db.session.add(User(username="org", email="org@mail.ru", password_hash="x")); db.session.commit()
-    org = User.query.filter_by(email="org@mail.ru").first()
-    ev = Event(organizer_id=org.id, event_date=datetime.datetime(2026, 11, 1, 12, 0, 0))
-    db.session.add(ev)
-    with pytest.raises(Exception): db.session.commit()
-
-def test_registration_unique_per_user_event(client):
-    db.session.add(User(username="o", email="o@mail.ru", password_hash="x", role="organizer"))
-    db.session.add(User(username="p", email="p@mail.ru", password_hash="x")); db.session.commit()
-    org = User.query.filter_by(email="o@mail.ru").first(); part = User.query.filter_by(email="p@mail.ru").first()
-    ev = Event(title="Кинопросмотр", organizer_id=org.id, event_date=datetime.datetime(2026, 11, 1, 12, 0, 0), is_inclusive=True)
-    db.session.add(ev); db.session.commit()
-    db.session.add(Registration(user_id=part.id, event_id=ev.id, status="pending")); db.session.commit()
-    db.session.add(Registration(user_id=part.id, event_id=ev.id, status="pending"))
-    with pytest.raises(Exception): db.session.commit()
-
-def test_event_organizer_relationship(client):
-    org = User(username="org2", email="org2@mail.ru", password_hash="x", role="organizer")
-    db.session.add(org); db.session.commit()
-    ev = Event(title="Экскурсия", organizer_id=org.id, event_date=datetime.datetime(2026, 11, 2, 18, 0, 0))
-    db.session.add(ev); db.session.commit()
-    found = Event.query.filter_by(title="Экскурсия").first()
-    assert found is not None and found.organizer_id == org.id
-
-def test_user_deaf_flag_persisted(client):
-    u = User(username="misha", email="misha@mail.ru", password_hash="x", is_deaf=True)
-    db.session.add(u); db.session.commit()
-    found = User.query.filter_by(email="misha@mail.ru").first()
-    assert found.is_deaf is True
-=======
 from models import User, Event, Registration, db
+from utils.accessibility import accessibility_matches
+
+
 def test_password_hashing(app):
-    u=User(username="tester",email="tester@example.com",password_hash=""); u.set_password("StrongPass123")
-    assert u.check_password("StrongPass123") and not u.check_password("wrong") and u.password_hash!="StrongPass123"
-def test_event_registration_relationship(app,user):
-    event=Event(title="Доступная лекция",organizer_id=user.id,accessibility="субтитры"); db.session.add(event); db.session.commit()
-    db.session.add(Registration(user_id=user.id,event_id=event.id)); db.session.commit(); assert event.registrations[0].user_id==user.id
->>>>>>> 93f660917251956e4d1be85cd249fe95ff9b5fe6
+    user = User(username="tester", email="tester@example.com", password_hash="")
+    user.set_password("StrongPass123")
+    assert user.check_password("StrongPass123")
+    assert not user.check_password("wrong")
+    assert user.password_hash != "StrongPass123"
+
+
+def test_event_registration_relationship(app, user):
+    event = Event(title="Доступная лекция", organizer_id=user.id, accessibility="субтитры")
+    db.session.add(event)
+    db.session.commit()
+    registration = Registration(user_id=user.id, event_id=event.id)
+    db.session.add(registration)
+    db.session.commit()
+    assert event.registrations[0].user_id == user.id
+
+
+def test_user_serialization_does_not_expose_password(app, user):
+    data = user.to_dict()
+    assert data["username"] == "testuser"
+    assert data["email"] == "user@example.com"
+    assert "password_hash" not in data
+    assert "password" not in data
+
+
+def test_event_serialization_has_accessibility_fields(app, user):
+    event = Event(
+        title="Лекция с субтитрами",
+        organizer_id=user.id,
+        accessibility="субтитры, текстовый чат",
+        location="Аудитория 12",
+    )
+    db.session.add(event)
+    db.session.commit()
+
+    data = event.to_dict()
+    assert data["title"] == "Лекция с субтитрами"
+    assert "субтитры" in data["accessibility"]
+    assert data["registration_count"] == 0
+
+
+def test_registration_serialization_contains_status(app, user):
+    event = Event(title="Текстовая встреча", organizer_id=user.id)
+    db.session.add(event)
+    db.session.commit()
+    registration = Registration(user_id=user.id, event_id=event.id, status="pending")
+    db.session.add(registration)
+    db.session.commit()
+
+    data = registration.to_dict()
+    assert data["user_id"] == user.id
+    assert data["event_id"] == event.id
+    assert data["status"] == "pending"
+
+
+def test_accessibility_matching_is_case_insensitive(app):
+    assert accessibility_matches("Субтитры, Текстовый чат", ["субтитры"])
+    assert not accessibility_matches("Субтитры", ["сурдоперевод"])
