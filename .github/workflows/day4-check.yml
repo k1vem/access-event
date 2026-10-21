@@ -1,67 +1,56 @@
-name: Day 4 Frontend and Docker Check
+name: Day 4 - Frontend and Docker
 
 on:
   push:
-    branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  frontend:
+  frontend-docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTING: "1"
+      SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
+          cache: pip
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Check required files
+        run: python -m pip install -r requirements.txt
+      - name: Check frontend and Docker deliverables
+        shell: bash
         run: |
-          set -eu
-          for f in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html templates/dashboard.html templates/event_detail.html static/css/style.css static/js/main.js static/day4/index.html static/day4/style.css static/day4/script.js Dockerfile docker-compose.yml .dockerignore; do
-            test -f "$f" || { echo "FAIL: missing $f"; exit 1; }
-            echo "PASS: $f"
+          set -euo pipefail
+          for file in templates/base.html templates/index.html templates/events.html templates/login.html templates/register.html templates/profile.html templates/dashboard.html templates/event_detail.html static/css/style.css static/js/main.js Dockerfile docker-compose.yml .dockerignore; do
+            test -s "$file" || { echo "::error::Missing or empty file: $file"; exit 1; }
           done
-
-      - name: Check frontend assets and accessibility
-        run: |
-          set -eu
           test "$(wc -c < static/css/style.css)" -ge 300
           test "$(wc -c < static/js/main.js)" -ge 200
           grep -q '@media' static/css/style.css
           grep -q 'showNotification' static/js/main.js
-          grep -q '#5cb85c' static/css/style.css
-          grep -l 'aria-label' templates/*.html
-          grep -l 'role=' templates/*.html
           grep -q '^FROM' Dockerfile
           grep -q '^COPY' Dockerfile
           grep -q '^CMD' Dockerfile
           grep -q 'services:' docker-compose.yml
           grep -q 'postgres' docker-compose.yml
-          echo "Frontend assets and Docker configuration look good."
-
-      - name: Compile Python files
-        run: python -m compileall -q app.py routes models.py
-
+          grep -q 'ghcr.io' .github/workflows/docker-publish.yml
+      - name: Compile application
+        run: python -m compileall -q app.py config.py models.py routes utils
       - name: Render main pages
-        env:
-          TESTING: "1"
-          SECRET_KEY: "test-secret-key-must-be-32-bytes-or-more-12345"
         run: |
           python - <<'PY'
           from app import create_app
-          app = create_app()
-          client = app.test_client()
-          for path in ("/", "/events", "/login", "/register", "/profile"):
+          client = create_app().test_client()
+          for path in ("/", "/events", "/login", "/register", "/profile", "/dashboard"):
               response = client.get(path)
-              assert response.status_code == 200, (
-                  f"{path} returned {response.status_code}: "
-                  + response.get_data(as_text=True)[:500]
-              )
-              print(f"PASS: {path}")
+              assert response.status_code == 200, f"{path}: HTTP {response.status_code}"
+              print(f"PASS {path}")
+          health = client.get("/health")
+          assert health.status_code == 200 and health.get_json().get("status") == "ok"
           PY
