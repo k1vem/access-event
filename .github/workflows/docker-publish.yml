@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   build-and-push:
+    # Safety guard for branch/PR test environments; only publish from main.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
