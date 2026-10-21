@@ -1,0 +1,11 @@
+name: Day4 Frontend Check
+on: push
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          test -f templates/base.html && test -f templates/index.html && test -f templates/events.html
+          test -f static/css/style.css && test -f static/js/main.js
+          test -f Dockerfile && test -f docker-compose.yml && test -f .dockerignore

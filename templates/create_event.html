@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Создать — AccessEvent{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>Создать мероприятие</h1>
+    {% if error %}<div class="notification notification-error">{{ error }}</div>{% endif %}
+    <form method="POST">
+        <div class="form-group"><label>Название:</label><input type="text" name="title" required></div>
+        <div class="form-group"><label>Описание:</label><textarea name="description" rows="3"></textarea></div>
+        <div class="form-group"><label>Место:</label><input type="text" name="location"></div>
+        <div class="form-group"><label>Дата и время:</label><input type="datetime-local" name="event_date" required></div>
+        <div class="form-group checkbox-group">
+            <input type="checkbox" name="is_inclusive" id="is_inclusive"><label for="is_inclusive">Инклюзивное</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+{% endblock %}
