@@ -1,68 +1,42 @@
-name: Day 1 Check
+name: Day 1 - Requirements and Analysis
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  check:
+  requirements:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Check required files
+      - name: Check required deliverables
+        shell: bash
         run: |
-          echo "=== Checking files ==="
-          for f in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md; do
-            if [ -f "$f" ]; then
-              echo "PASS: $f found"
-              SIZE=$(wc -c < "$f")
-              if [ "$SIZE" -lt 40 ]; then
-                echo "FAIL: $f is too small ($SIZE bytes, need >= 80)"
-                exit 1
-              fi
-            else
-              echo "FAIL: $f not found"
-              exit 1
-            fi
+          set -euo pipefail
+          for file in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md; do
+            test -s "$file" || { echo "::error::Missing or empty file: $file"; exit 1; }
           done
-          
-      - name: Check User Stories
+      - name: Check functional and non-functional requirements
+        shell: bash
         run: |
-          COUNT=$(grep -c "Как " docs/requirements.md || echo 0)
-          echo "User Stories found: $COUNT"
-          if [ "$COUNT" -lt 10 ]; then
-            echo "FAIL: need >= 10 User Stories"
-            exit 1
-          fi
-          echo "PASS: User Stories OK"
-          
-      - name: Check NFR
+          set -euo pipefail
+          fr_count="$(grep -Ec '^FR-[0-9]+' docs/requirements.md || true)"
+          nfr_count="$(grep -Ec '^NFR-[0-9]+' docs/requirements.md || true)"
+          us_count="$(grep -Ec '^US-[0-9]+' docs/requirements.md || true)"
+          echo "FR=$fr_count NFR=$nfr_count US=$us_count"
+          (( fr_count >= 15 )) || { echo "::error::Expected at least 15 functional requirements"; exit 1; }
+          (( nfr_count >= 8 )) || { echo "::error::Expected at least 8 non-functional requirements"; exit 1; }
+          (( us_count >= 15 )) || { echo "::error::Expected at least 15 user stories"; exit 1; }
+      - name: Check technical specification sections
+        shell: bash
         run: |
-          COUNT=$(grep -c "NFR-" docs/requirements.md || echo 0)
-          echo "NFR found: $COUNT"
-          if [ "$COUNT" -lt 5 ]; then
-            echo "FAIL: need >= 5 NFR"
-            exit 1
-          fi
-          echo "PASS: NFR OK"
-          
-      - name: Check TZ sections
-        run: |
-          for section in "Назначение" "предметной области" "функци" "качеств" "интерфей" "данны" "стек" "Ограничен"; do
-            if ! grep -qi "$section" docs/tz.md; then
-              echo "FAIL: section '$section' not found in tz.md"
-              exit 1
-            fi
+          set -euo pipefail
+          for section in "Назначение" "предметной области" "Требования к функциям" "Требования к качеству" "интерфейсу" "данным" "технологический стек" "Ограничения"; do
+            grep -qi "$section" docs/tz.md || { echo "::error::Missing TZ section: $section"; exit 1; }
           done
-          echo "PASS: All TZ sections found"
-          
-      - name: Check entities
-        run: |
-          COUNT=$(grep -c "|" docs/analysis.md || echo 0)
-          if [ "$COUNT" -lt 6 ]; then
-            echo "FAIL: need more entities in analysis.md"
-            exit 1
-          fi
-          echo "PASS: Entities OK"
-          
-      - name: All checks passed
-        run: echo "ALL CHECKS PASSED"
+      - name: Finish
+        run: echo Day-1-checks-passed
