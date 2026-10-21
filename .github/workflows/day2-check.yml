@@ -1,14 +1,34 @@
 name: Day 2 Check
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - ".github/workflows/day2-check.yml"
+      - "docs/schema.sql"
+      - "docs/security.md"
+      - "docs/architecture.md"
+      - "docs/er_diagram.png"
+  pull_request:
+    paths:
+      - ".github/workflows/day2-check.yml"
+      - "docs/schema.sql"
+      - "docs/security.md"
+      - "docs/architecture.md"
+      - "docs/er_diagram.png"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   check-day2:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     services:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: testdb
         ports:
@@ -17,33 +37,62 @@ jobs:
           --health-cmd "pg_isready -U postgres -d testdb"
           --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check required documentation
+        shell: bash
         run: |
-          for f in docs/schema.sql docs/security.md docs/architecture.md docs/er_diagram.png; do test -f "$f" || exit 1; done
+          set -euo pipefail
+          for file in docs/schema.sql docs/security.md docs/architecture.md docs/er_diagram.png; do
+            if [[ ! -s "$file" ]]; then
+              echo "::error::Required file is missing or empty: $file"
+              exit 1
+            fi
+          done
+
       - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
-      - name: Execute DDL
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+
+      - name: Execute database schema
         env:
           PGPASSWORD: postgres
-        run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d testdb -f docs/schema.sql
+        run: |
+          psql --set ON_ERROR_STOP=1             --host 127.0.0.1 --username postgres --dbname testdb             --file docs/schema.sql
+
       - name: Verify tables and foreign keys
         env:
           PGPASSWORD: postgres
+        shell: bash
         run: |
-          tables=$(psql -h localhost -U postgres -d testdb -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';")
-          fks=$(psql -h localhost -U postgres -d testdb -t -c "SELECT count(*) FROM information_schema.table_constraints WHERE constraint_type='FOREIGN KEY' AND table_schema='public';")
-          echo "Tables: $tables; foreign keys: $fks"
-          test "$tables" -ge 5
-          test "$fks" -ge 5
+          set -euo pipefail
+          tables="$(psql -At --host 127.0.0.1 --username postgres --dbname testdb             --command "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';")"
+          foreign_keys="$(psql -At --host 127.0.0.1 --username postgres --dbname testdb             --command "SELECT count(*) FROM information_schema.table_constraints WHERE constraint_type='FOREIGN KEY' AND table_schema='public';")"
+
+          echo "Tables created: $tables"
+          echo "Foreign keys created: $foreign_keys"
+          [[ "$tables" =~ ^[0-9]+$ ]] || { echo "::error::Could not read table count"; exit 1; }
+          [[ "$foreign_keys" =~ ^[0-9]+$ ]] || { echo "::error::Could not read foreign-key count"; exit 1; }
+          (( tables >= 5 ))
+          (( foreign_keys >= 5 ))
+
       - name: Verify roles and security documentation
+        shell: bash
         run: |
-          for role in guest user organizer admin; do grep -qi "$role" docs/security.md || exit 1; done
-          grep -qi "JWT" docs/security.md
-          grep -qi "хеш" docs/security.md
-      - run: echo "All Day 2 checks passed"
+          set -euo pipefail
+          for role in guest user organizer admin; do
+            grep -Eiq "\\b${role}\\b" docs/security.md || {
+              echo "::error::Role '$role' is missing from docs/security.md"
+              exit 1
+            }
+          done
+          grep -Eiq "JWT" docs/security.md
+          grep -Eiq "хеш" docs/security.md
+
+      - name: Finish
+        run: echo "All Day 2 checks passed."
